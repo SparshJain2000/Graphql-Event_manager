@@ -54,7 +54,7 @@ module.exports = {
         const event = new Event({
             ...args.eventInput,
             date: new Date(args.eventInput.date),
-            creator: "5fa993f1dd57e62c14324b98",
+            creator: "5fa9afc76704a712d8969fb6",
         });
         let createdEvent;
         // * return to perform async
@@ -66,12 +66,12 @@ module.exports = {
                 date: new Date(event._doc.date).toISOString(),
                 creator: user.bind(this, result._doc.creator),
             };
-            const user = await User.findById("5fa993f1dd57e62c14324b98");
-            if (!user) {
+            const userFound = await User.findById("5fa9afc76704a712d8969fb6");
+            if (!userFound) {
                 throw "User doesn't exist";
             }
-            user.createdEvents.push(event);
-            await user.save();
+            userFound.createdEvents.push(event);
+            await userFound.save();
             // console.log(result);
             return createdEvent;
         } catch (err) {
@@ -79,33 +79,21 @@ module.exports = {
             throw err;
         }
     },
-    createUser: (args) => {
-        return User.findOne({ email: args.userInput.email })
-            .then((user) => {
-                if (user) {
-                    throw new Error("User already Exists");
-                }
-                return bcrypt
-                    .hash(args.userInput.password, 12)
-                    .then((hashed) => {
-                        const user = new User({
-                            ...args.userInput,
-                            password: hashed,
-                        });
-                        return user.save();
-                    })
-                    .then((result) => {
-                        console.log(result);
-                        return { ...result._doc, password: null };
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                        throw err;
-                    });
-            })
-            .catch((err) => {
-                console.log(err);
-                throw err;
+    createUser: async (args) => {
+        try {
+            const user = await User.findOne({ email: args.userInput.email });
+
+            if (user) throw new Error("User already Exists");
+            const hashed = await bcrypt.hash(args.userInput.password, 12);
+            const newUser = new User({
+                ...args.userInput,
+                password: hashed,
             });
+            const result = await newUser.save();
+            return { ...result._doc, password: null };
+        } catch (err) {
+            console.log(err);
+            throw err;
+        }
     },
 };
