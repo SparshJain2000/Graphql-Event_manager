@@ -29,7 +29,7 @@ module.exports = {
             const booking = await Booking.findById(args.bookingId).populate(
                 "event",
             );
-            if (!booking) throw "Booking not found";
+            if (!booking) throw new Error("Booking not found");
             const event = transformEvent(booking.event);
             // * can use booking._doc.event (_doc dont have meta data)
             await Booking.deleteOne({ _id: args.bookingId });
