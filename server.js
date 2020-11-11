@@ -3,13 +3,14 @@ const bodyParser = require("body-parser"),
     { graphqlHTTP } = require("express-graphql"),
     mongoose = require("mongoose"),
     gqlSchema = require("./graphql/schema/index"),
+    isAuth = require("./middleware/index"),
     gqlResolvers = require("./graphql/resolvers/index");
 
 app = express();
 require("dotenv").config();
 const PORT = 8080;
 app.use(bodyParser.json());
-
+app.use(isAuth);
 app.use(
     "/graphql",
     graphqlHTTP({
