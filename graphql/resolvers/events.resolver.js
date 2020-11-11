@@ -13,11 +13,12 @@ module.exports = {
         }
     },
 
-    createEvent: async (args) => {
+    createEvent: async (args, req) => {
+        if (!req.isAuth) throw new Error("Not Authenticated");
         const event = new Event({
             ...args.eventInput,
             date: new Date(args.eventInput.date),
-            creator: "5fa9afc76704a712d8969fb6",
+            creator: req.userId,
         });
         let createdEvent;
         // * return to perform async
@@ -25,7 +26,7 @@ module.exports = {
             const result = await event.save();
             console.log({ ...result._doc });
             createdEvent = transformEvent(result);
-            const userFound = await User.findById("5fa9afc76704a712d8969fb6");
+            const userFound = await User.findById(req.userId);
             if (!userFound) {
                 throw "User doesn't exist";
             }
