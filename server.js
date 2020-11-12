@@ -8,7 +8,18 @@ const bodyParser = require("body-parser"),
 
 app = express();
 require("dotenv").config();
-const PORT = 8080;
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS");
+    res.setHeader(
+        "Access-Control-Allow-Headers",
+        "Content-Type, Authorization",
+    );
+    if (req.method === "OPTIONS") {
+        return res.sendStatus(200);
+    }
+    next();
+});
 app.use(bodyParser.json());
 app.use(isAuth);
 app.use(
@@ -31,6 +42,7 @@ mongoose
     .then(() => {
         console.log("connected to MONGO");
     });
+const PORT = 8080;
 app.listen(PORT, () => {
     console.log(`Listening to ${PORT} 🎊`);
 });
