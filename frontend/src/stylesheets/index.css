@@ -5,7 +5,7 @@
     --secondary: #115173;
     --highlight: #ffa62b;
     --info: #111f4d;
-    --danger: #d65a31;
+    --danger: #c70039;
     --warning: #f8b500;
     /* --bg: #606470; */
     --bg: #f0f0f0;
@@ -16,10 +16,10 @@
 .dark {
     --text: #ececec;
     --primary: #f2a365;
-    --secondary: #ff570c;
+    --secondary: #d1490a;
     --highlight: #ffa62b;
     --info: #3282b8;
-    --danger: #e43a19;
+    --danger: #c70039;
     --warning: #f8b500;
     --bg: #525252;
     --bg-alt: #1a1a2e;
@@ -334,6 +334,16 @@ a:hover {
     /* color: var(--text); */
 }
 
+.alert-danger {
+    color: white!important;
+    background-color: var(--danger)!important;
+    border-color: var(--danger)!important;
+}
+
+a:hover {
+    color: var(--secondary)!important
+}
+
 
 /* //=========== */
 
@@ -347,4 +357,42 @@ a:hover {
     border-color: var(--secondary);
     color: white!important
     /* opacity: .7; */
+}
+
+.btn.btn-secondary {
+    border-color: var(--secondary);
+    background-color: var(--secondary);
+}
+
+.btn.btn-secondary:hover {
+    border-color: var(--secondary);
+    background-color: var(--secondary);
+    opacity: 0.75;
+}
+
+.btn.btn-secondary:focus {
+    border-color: var(--secondary);
+    background-color: var(--secondary);
+    opacity: 0.75;
+    box-shadow: 0 0 0 0.1rem rgba(235, 242, 248, 0.13)
+}
+
+.btn.btn-secondary:active {
+    border-color: var(--secondary)!important;
+    background-color: var(--secondary)!important;
+    opacity: 0.75;
+    box-shadow: 0 0 0 0.1rem rgba(227, 233, 238, 0.158)!important
+}
+
+.modal-content {
+    background-color: var(--bg)!important
+}
+
+.modal-header {
+    background-color: var(--secondary)!important;
+}
+
+.modal-title,
+.modal-header button span {
+    color: white!important
 }
