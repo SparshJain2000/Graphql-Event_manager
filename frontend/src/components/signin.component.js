@@ -10,9 +10,11 @@ import {
 } from "reactstrap";
 import "../stylesheets/auth.css";
 import AuthNav from "./authNav.component";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import axios from "axios";
+import AuthContext from "../context/auth-context";
 export default class Signin extends Component {
+    static contextType = AuthContext;
     constructor(props) {
         super(props);
         this.state = {
@@ -81,6 +83,15 @@ export default class Signin extends Component {
                         });
                     } else {
                         console.log(data.data.data.login);
+                        const userData = data?.data?.data?.login;
+                        if (userData && userData.token) {
+                            this.context.login(
+                                userData.token,
+                                userData.userId,
+                                userData.tokenExpiration,
+                            );
+                            this.props.history.push("/events");
+                        }
                     }
                 })
                 .catch((err) => {
