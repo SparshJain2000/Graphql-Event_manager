@@ -22,7 +22,7 @@ import {
 // } from "@fortawesome/free-solid-svg-icons";
 // import { faFacebook, faGoogle } from "@fortawesome/free-brands-svg-icons";
 
-const NavbarComponent = (props) => {
+const NavbarComponent = ({ user, logout }) => {
     const [error, setError] = useState("");
     const [showError, setShowError] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
@@ -41,17 +41,17 @@ const NavbarComponent = (props) => {
             </Alert>
             <Navbar expand='lg' className='justify-content-between'>
                 <div>
-                    <NavbarBrand href='/' className='Raleway text-align-center'>
+                    <Link
+                        to='/'
+                        className='navbar-brand Raleway text-align-center'>
                         EasyBookings
-                    </NavbarBrand>
-
+                    </Link>
                     {/* <button
                         class='btn btn-outline-secondary my-2 my-sm-0'
                         type='submit'>
                         Toggle Theme
                     </button> */}
                 </div>
-
                 <NavbarToggler
                     onClick={toggle}
                     className={`position-relative ${
@@ -62,18 +62,32 @@ const NavbarComponent = (props) => {
                     <span></span>
                 </NavbarToggler>
 
-                <Collapse isOpen={isOpen} navbar>
+                <Collapse
+                    isOpen={isOpen}
+                    navbar
+                    className='justify-content-lg-between'>
                     <Nav className='row justify-content-center px-4' navbar>
-                        <NavItem className='m-1 my-2 my-lg-1'>
-                            <NavLink to='/auth'>Authorization</NavLink>
-                        </NavItem>
-                        <NavItem className='m-1 my-2 my-lg-1'>
+                        <NavItem className='m-1 my-3 my-lg-1'>
                             <NavLink to='/events'>Events</NavLink>
                         </NavItem>
-                        <NavItem className='m-1 my-2 my-lg-1'>
-                            <NavLink to='/bookings'>Bookings</NavLink>
-                        </NavItem>
+
+                        {user.token && (
+                            <NavItem className='m-1 my-3 my-lg-1'>
+                                <NavLink to='/bookings'>Bookings</NavLink>
+                            </NavItem>
+                        )}
                     </Nav>
+                    {!user.token ? (
+                        <div className='nav-item m-1 my-2 mt-lg-1'>
+                            <NavLink to='/auth'>Sign In</NavLink>
+                        </div>
+                    ) : (
+                        <div className='nav-item m-1 my-2 mt-lg-1'>
+                            <a onClick={logout} style={{ cursor: "pointer" }}>
+                                Sign Out
+                            </a>
+                        </div>
+                    )}
                     {/* {!props.user ? (
                         <Nav
                             className='row ml-auto align-content-center justify-content-center mt-3 mt-lg-0'
