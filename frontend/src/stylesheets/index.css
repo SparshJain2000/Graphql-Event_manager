@@ -1,27 +1,29 @@
 @import url("https://fonts.googleapis.com/css2?family=Merriweather&display=swap&family=Open+Sans&family=Raleway&family=Montserrat:wght@400;600&family=Open+Sans&display=swap&family=Chivo:wght@400&famliy=Lobster&display=swap");
 .light {
-    --text: #313131;
-    --primary: #1e56a0;
-    --secondary: #dc552c;
+    --text: #6e6d6d;
+    --primary: #787b86;
+    --secondary: #115173;
+    --highlight: #ffa62b;
     --info: #111f4d;
     --danger: #d65a31;
     --warning: #f8b500;
     /* --bg: #606470; */
-    --bg: #f7f7f7;
-    --bg-alt: #e4e4e4;
-    --alt: #f8b500;
+    --bg: #f0f0f0;
+    --bg-alt: #e2e2e2;
+    --alt: 245, 181, 7;
 }
 
 .dark {
     --text: #ececec;
     --primary: #f2a365;
     --secondary: #ff570c;
+    --highlight: #ffa62b;
     --info: #3282b8;
     --danger: #e43a19;
     --warning: #f8b500;
-    --bg: #606470;
+    --bg: #525252;
     --bg-alt: #1a1a2e;
-    --alt: #313131;
+    --alt: 49, 49, 49;
     /* --bg: #f7f7f7; */
 }
 
@@ -32,6 +34,7 @@
 
 * {
     color: var(--text);
+    transition: background .6s ease-in-out, color .3s ease-in-out
 }
 
 html {
@@ -61,6 +64,14 @@ h3,
 h4,
 h5 {
     font-family: "Raleway", sans-serif;
+}
+
+input {
+    color: var(--text)!important
+}
+
+.color-secondary {
+    color: var(--secondary)!important;
 }
 
 .Raleway {
@@ -307,28 +318,33 @@ a:hover {
 .btn-round.btn-theme {
     position: absolute;
     top: 64px;
-    right: 5px;
+    right: 8px;
     border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    background-color: var(--alt);
+    width: 40px;
+    height: 40px;
+    background-color: rgb(var(--alt));
+}
+
+.btn-round.btn-theme:focus {
+    box-shadow: 0 0 0 0.2rem rgba(var(--alt), .3);
 }
 
 .svg-inline--fa path {
-    color: var(--text);
+    color: white;
+    /* color: var(--text); */
 }
 
 
 /* //=========== */
 
 .btn.btn-outline-secondary {
-    border-color: var(--primary);
-    color: var(--primary);
+    border-color: var(--secondary);
+    color: var(--secondary);
 }
 
 .btn.btn-outline-secondary:hover {
-    background-color: var(--primary)!important;
-    border-color: var(--primary);
+    background-color: var(--secondary)!important;
+    border-color: var(--secondary);
     color: white!important
     /* opacity: .7; */
 }
