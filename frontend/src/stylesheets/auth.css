@@ -1,0 +1,20 @@
+.border-secondary {
+    border-radius: 3px;
+    border: 1px solid var(--secondary)!important;
+}
+
+.border-highlight {
+    border-radius: 3px;
+    border: 1px solid var(--primary)!important;
+}
+
+input {
+    background-color: var(--bg)!important;
+    /* border-color: var(--primary)!important */
+}
+
+input:focus,
+.form-control:focus {
+    border-color: rgb(var(--alt));
+    box-shadow: 0 0 0 0.2rem rgba(var(--alt), .3)!important;
+}
