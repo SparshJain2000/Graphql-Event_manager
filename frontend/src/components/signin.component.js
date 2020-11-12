@@ -1,116 +1,168 @@
-import React from "react";
-import Avatar from "@material-ui/core/Avatar";
-import Button from "@material-ui/core/Button";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import TextField from "@material-ui/core/TextField";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
-import Link from "@material-ui/core/Link";
-import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
+import React, { Component } from "react";
+import {
+    Form,
+    FormGroup,
+    Label,
+    Input,
+    FormFeedback,
+    Button,
+    Alert,
+} from "reactstrap";
+import "../stylesheets/auth.css";
+import AuthNav from "./authNav.component";
+import { Link } from "react-router-dom";
+import axios from "axios";
+export default class Signin extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            email: "",
+            password: "",
+            invalid: {},
+            signin: true,
+            visible: false,
+            mess: "",
+        };
+        this.toggleMode = this.toggleMode.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.onDismiss = this.onDismiss.bind(this);
+        this.submit = this.submit.bind(this);
+    }
+    toggleMode = () => {
+        this.setState({
+            signin: !this.state.signin,
+        });
+    };
+    validateEmail = (email) => {
+        const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    };
+    validatePassword = (pass) => pass.trim().length > 0;
+    handleChange = (e) => {
+        this.setState({
+            [e.target.name]: e.target.value,
+            invalid: {
+                ...this.state.invalid,
+                [e.target.name]:
+                    e.target.name === "email"
+                        ? this.validateEmail(e.target.value)
+                        : this.validatePassword(e.target.value),
+            },
+        });
+    };
 
-function Copyright() {
-    return (
-        <Typography variant='body2' color='textSecondary' align='center'>
-            {"Copyright © "}
-            <Link color='inherit' href='https://material-ui.com/'>
-                Your Website
-            </Link>{" "}
-            {new Date().getFullYear()}
-            {"."}
-        </Typography>
-    );
-}
+    submit = (e) => {
+        e.preventDefault();
+        console.log(this.state.invalid.email);
+        console.log(this.state.invalid.password);
+        if (this.state.invalid.password && this.state.invalid.email) {
+            const credentials = {
+                email: this.state.email,
+                password: this.state.password,
+            };
+            const query = `
+                query {
+                    login(email:"${credentials.email}",password:"${credentials.password}"){
+                        userId
+                        token
+                        tokenExpiration
+                    }
+                }
+            `;
+            console.log(query);
+            axios
+                .post("http://localhost:8080/graphql", { query })
+                .then((data) => {
+                    console.log(data);
+                    if (data.data.errors) {
+                        this.setState({
+                            visible: true,
+                            mess: data.data.errors[0].message,
+                        });
+                    } else {
+                        console.log(data.data.data.login);
+                    }
+                })
+                .catch((err) => {
+                    console.log("err", err.response);
 
-const useStyles = makeStyles((theme) => ({
-    paper: {
-        marginTop: theme.spacing(8),
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-    },
-    avatar: {
-        margin: theme.spacing(1),
-        backgroundColor: theme.palette.secondary.main,
-    },
-    form: {
-        width: "100%", // Fix IE 11 issue.
-        marginTop: theme.spacing(1),
-    },
-    submit: {
-        margin: theme.spacing(3, 0, 2),
-    },
-}));
-
-export default function SignIn() {
-    const classes = useStyles();
-
-    return (
-        <Container component='main' maxWidth='xs'>
-            <CssBaseline />
-            <div className={classes.paper}>
-                <Avatar className={classes.avatar}>
-                    <LockOutlinedIcon />
-                </Avatar>
-                <Typography component='h1' variant='h5'>
-                    Sign in
-                </Typography>
-                <form className={classes.form} noValidate>
-                    <TextField
-                        variant='outlined'
-                        margin='normal'
-                        required
-                        fullWidth
-                        id='email'
-                        label='Email Address'
-                        name='email'
-                        autoComplete='email'
-                        autoFocus
-                    />
-                    <TextField
-                        variant='outlined'
-                        margin='normal'
-                        required
-                        fullWidth
-                        name='password'
-                        label='Password'
-                        type='password'
-                        id='password'
-                        autoComplete='current-password'
-                    />
-                    <FormControlLabel
-                        control={<Checkbox value='remember' color='primary' />}
-                        label='Remember me'
-                    />
-                    <Button
-                        type='submit'
-                        fullWidth
-                        variant='contained'
-                        color='primary'
-                        className={classes.submit}>
-                        Sign In
-                    </Button>
-                    <Grid container>
-                        <Grid item xs>
-                            <Link href='#' variant='body2'>
-                                Forgot password?
-                            </Link>
-                        </Grid>
-                        <Grid item>
-                            <Link href='#' variant='body2'>
-                                {"Don't have an account? Sign Up"}
-                            </Link>
-                        </Grid>
-                    </Grid>
-                </form>
+                    this.setState({
+                        visible: true,
+                        mess: "Something went wrong! Please try again later.",
+                    });
+                });
+        }
+    };
+    onDismiss = () => this.setState({ visible: false });
+    render() {
+        return (
+            <div>
+                <Alert
+                    color='danger'
+                    isOpen={this.state.visible}
+                    toggle={this.onDismiss}>
+                    {this.state.mess}
+                </Alert>
+                <AuthNav />
+                <Form
+                    className='my-form col-10 col-md-8 col-lg-6 mx-auto my-4 p-3 border-highlight'
+                    onSubmit={this.submit}>
+                    <h3>Sign In</h3>
+                    <FormGroup>
+                        <Label>E-mail</Label>
+                        <Input
+                            type='email'
+                            invalid={
+                                this.state.invalid.email === undefined
+                                    ? false
+                                    : !this.state.invalid.email
+                            }
+                            name='email'
+                            onChange={this.handleChange}></Input>
+                        <FormFeedback>Please enter a valid E-mail</FormFeedback>
+                    </FormGroup>
+                    <FormGroup>
+                        <Label>Password</Label>
+                        <Input
+                            type='password'
+                            name='password'
+                            invalid={
+                                this.state.invalid.password === undefined
+                                    ? false
+                                    : !this.state.invalid.password
+                            }
+                            onChange={this.handleChange}></Input>
+                        <FormFeedback>Enter a password</FormFeedback>
+                    </FormGroup>
+                    <FormGroup>
+                        <div className='row justify-content-between'>
+                            <span className='col-12 col-md-8'>
+                                New to{" "}
+                                <span className='Raleway'>EasyBookings</span>?{" "}
+                                {/* <span
+                                    onClick={this.toggleMode}
+                                    style={{ cursor: "pointer" }}
+                                    className='color-secondary my-1'>
+                                    Sign Up
+                                </span> */}
+                                <Link
+                                    to='/auth/signup'
+                                    className='color-secondary my-1'>
+                                    Sign Up
+                                </Link>
+                            </span>
+                            <span className='col-12 col-md-4 d-flex flex-row justify-content-md-end'>
+                                <Button
+                                    color={"outline-secondary"}
+                                    type='submit'
+                                    className='my-1'>
+                                    Sign in
+                                </Button>
+                            </span>
+                        </div>
+                    </FormGroup>
+                </Form>
             </div>
-            <Box mt={8}>
-                <Copyright />
-            </Box>
-        </Container>
-    );
+        );
+    }
 }
