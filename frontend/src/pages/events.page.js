@@ -1,11 +1,110 @@
+import Axios from "axios";
 import React, { Component } from "react";
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import {
+    Button,
+    Modal,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    Label,
+    FormGroup,
+    Input,
+} from "reactstrap";
+import AuthContext from "../context/auth-context";
+const Event = ({ event }) => {
+    return (
+        <div className='border-secondary p-2 my-2' key={event._id}>
+            <h3>{event.title}</h3>
+            <h6>{event.price}</h6>
+            <p>{event.description}</p>
+            <p>{event.creator.email}</p>
+        </div>
+    );
+};
 export default class Events extends Component {
     state = {
         modal: false,
+        title: "",
+        description: "",
+        price: "",
+        date: "",
+        events: null,
+    };
+    static contextType = AuthContext;
+    componentDidMount() {
+        if (!this.state.events) {
+            this.fetchEvents();
+        }
+    }
+    fetchEvents = () => {
+        const query = `
+            query {
+                events{
+                    _id
+                    title
+                    price
+                    description
+                    date 
+                        creator {
+                            _id
+                            email
+                        }
+                    }
+                }`;
+        Axios.post(`http://localhost:8080/graphql`, { query })
+            .then((result) => {
+                const data = result?.data?.data?.events;
+                console.log(data);
+                if (data) this.setState({ events: data });
+            })
+            .catch((err) => console.log(err.response));
     };
     toggleModal = () => this.setState({ modal: !this.state.modal });
-
+    createEvent = () => {
+        // console.log(this.context);
+        const valid =
+            this.state.title.trim().length > 0 &&
+            this.state.description.trim().length > 0 &&
+            +this.state.price >= 0 &&
+            this.state.date.trim().length > 0;
+        if (valid) {
+            let config = {
+                headers: {
+                    Authorization: `Bearer ${this.context.token}`,
+                },
+            };
+            const query = `
+                mutation {
+                createEvent(eventInput:{
+                    title:"${this.state.title}"
+                    description:"${this.state.description}"
+                    price:${+this.state.price}
+                    date:"${this.state.date}"
+                }){
+                    title
+                    price
+                    _id    
+                }
+                }
+            `;
+            Axios.post(`http://localhost:8080/graphql`, { query }, config)
+                .then((result) => {
+                    console.log(result);
+                    const data = result?.data?.data;
+                    console.log(data);
+                    if (!data.createEvent && result?.data.errors) {
+                        this.context.logout();
+                        this.props.history.push("/auth/signin");
+                    }
+                    // if (data) this.setState({ events: data });
+                    this.toggleModal();
+                })
+                .catch((err) => console.log(err.response));
+        }
+    };
+    handleChange = (e) => {
+        this.setState({ [e.target.name]: e.target.value });
+    };
     render() {
         return (
             <div className='row'>
@@ -18,23 +117,56 @@ export default class Events extends Component {
                         Create Event
                     </Button>
                 </div>
+                <div className='col-11 col-md-9 col-lg-8 mx-auto'>
+                    {this.state.events &&
+                        this.state.events
+                            .reverse()
+                            .map((event) => (
+                                <Event event={event} key={event._id} />
+                            ))}
+                </div>
                 <Modal isOpen={this.state.modal} toggle={this.toggleModal}>
                     <ModalHeader toggle={this.toggleModal}>
                         Modal title
                     </ModalHeader>
                     <ModalBody>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing
-                        elit, sed do eiusmod tempor incididunt ut labore et
-                        dolore magna aliqua. Ut enim ad minim veniam, quis
-                        nostrud exercitation ullamco laboris nisi ut aliquip ex
-                        ea commodo consequat. Duis aute irure dolor in
-                        reprehenderit in voluptate velit esse cillum dolore eu
-                        fugiat nulla pariatur. Excepteur sint occaecat cupidatat
-                        non proident, sunt in culpa qui officia deserunt mollit
-                        anim id est laborum.
+                        <FormGroup>
+                            <Label>Title</Label>
+                            <Input
+                                onChange={this.handleChange}
+                                type='text'
+                                value={this.state.title}
+                                name='title'></Input>
+                        </FormGroup>
+
+                        <FormGroup>
+                            <Label>Price</Label>
+                            <Input
+                                onChange={this.handleChange}
+                                type='number'
+                                value={this.state.price}
+                                name='price'></Input>
+                        </FormGroup>
+                        <FormGroup>
+                            <Label>Time</Label>
+                            <Input
+                                onChange={this.handleChange}
+                                type='datetime-local'
+                                value={this.state.date}
+                                name='date'></Input>
+                        </FormGroup>
+                        <FormGroup>
+                            <Label>Description</Label>
+                            <Input
+                                onChange={this.handleChange}
+                                type='textarea'
+                                name='description'
+                                value={this.state.description}
+                                rows='3'></Input>
+                        </FormGroup>
                     </ModalBody>
                     <ModalFooter>
-                        <Button color='secondary' onClick={this.toggleModal}>
+                        <Button color='secondary' onClick={this.createEvent}>
                             Create
                         </Button>{" "}
                         <Button
