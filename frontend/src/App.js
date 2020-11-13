@@ -6,17 +6,11 @@ import Auth from "./pages/auth.page";
 import Events from "./pages/events.page";
 import Navbar from "./components/navbar.component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-    faSun,
-    faMoon,
-    faEye,
-    faLightbulb,
-} from "@fortawesome/free-solid-svg-icons";
+import { faLightbulb } from "@fortawesome/free-solid-svg-icons";
 import AuthContext from "./context/auth-context";
 class App extends Component {
     state = {
         token: null,
-
         userId: null,
     };
     componentDidMount() {
@@ -24,6 +18,11 @@ class App extends Component {
         if (localStorage.getItem("theme")) {
             document.body.classList = localStorage.getItem("theme");
         } else localStorage.setItem("theme", "light");
+
+        if (localStorage.getItem("user")) {
+            const user = JSON.parse(localStorage.getItem("user"));
+            this.setState({ ...user });
+        } else localStorage.setItem("user", JSON.stringify(this.state));
     }
     changeTheme() {
         console.log(localStorage.getItem("theme"));
@@ -35,9 +34,14 @@ class App extends Component {
             localStorage.setItem("theme", theme);
         } else localStorage.setItem("theme", "light");
     }
-    login = (token, userId, tokenExpiration) =>
+    login = (token, userId) => {
         this.setState({ token, userId });
-    logout = () => this.setState({ token: null, userId: null });
+        localStorage.setItem("user", JSON.stringify({ token, userId }));
+    };
+    logout = () => {
+        this.setState({ token: null, userId: null });
+        localStorage.removeItem("user");
+    };
     render() {
         return (
             <BrowserRouter>
@@ -63,14 +67,11 @@ class App extends Component {
                         </button>
                         <main>
                             <Switch>
-                                {!this.state.token && (
-                                    <Redirect from='/' to='/auth' exact />
-                                )}
                                 {this.state.token && (
                                     <Redirect from='/' to='/events' exact />
                                 )}
                                 {this.state.token && (
-                                    <Redirect from='/auth' to='/events' exact />
+                                    <Redirect from='/auth' to='/events' />
                                 )}
                                 {!this.state.token && (
                                     <Route path='/auth' component={Auth} />
@@ -82,6 +83,9 @@ class App extends Component {
                                     />
                                 )}
                                 <Route path='/events' component={Events} />
+                                {!this.state.token && (
+                                    <Redirect to='/auth' exact />
+                                )}
                             </Switch>
                         </main>
                     </AuthContext.Provider>
