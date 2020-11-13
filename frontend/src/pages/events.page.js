@@ -11,13 +11,15 @@ import {
     Input,
 } from "reactstrap";
 import AuthContext from "../context/auth-context";
-const Event = ({ event }) => {
+import Event from "../components/event.component";
+import Spinner from "../components/spinner.component";
+const EventList = ({ events, user }) => {
     return (
-        <div className='border-secondary p-2 my-2' key={event._id}>
-            <h3>{event.title}</h3>
-            <h6>{event.price}</h6>
-            <p>{event.description}</p>
-            <p>{event.creator.email}</p>
+        <div className='col-11 col-md-9 col-lg-8 mx-auto'>
+            {events &&
+                events.map((event) => (
+                    <Event event={event} key={event._id} user={user} />
+                ))}
         </div>
     );
 };
@@ -29,6 +31,7 @@ export default class Events extends Component {
         price: "",
         date: "",
         events: null,
+        isLoading: false,
     };
     static contextType = AuthContext;
     componentDidMount() {
@@ -37,6 +40,7 @@ export default class Events extends Component {
         }
     }
     fetchEvents = () => {
+        this.setState({ isLoading: true });
         const query = `
             query {
                 events{
@@ -55,9 +59,13 @@ export default class Events extends Component {
             .then((result) => {
                 const data = result?.data?.data?.events;
                 console.log(data);
-                if (data) this.setState({ events: data });
+                if (data) this.setState({ events: data.reverse() });
+                this.setState({ isLoading: false });
             })
-            .catch((err) => console.log(err.response));
+            .catch((err) => {
+                console.log(err.response);
+                this.setState({ isLoading: false });
+            });
     };
     toggleModal = () => this.setState({ modal: !this.state.modal });
     createEvent = () => {
@@ -84,6 +92,13 @@ export default class Events extends Component {
                     title
                     price
                     _id    
+                    date
+                    description
+                    creator{
+                        _id
+                        email
+                    }
+
                 }
                 }
             `;
@@ -95,6 +110,17 @@ export default class Events extends Component {
                     if (!data.createEvent && result?.data.errors) {
                         this.context.logout();
                         this.props.history.push("/auth/signin");
+                    } else {
+                        // console.log(data.createEvent);
+                        // let newEvents = this.state.events;
+                        const newEvents = [
+                            data.createEvent,
+                            ...this.state.events,
+                        ];
+                        console.log(newEvents);
+                        this.setState({
+                            events: newEvents,
+                        });
                     }
                     // if (data) this.setState({ events: data });
                     this.toggleModal();
@@ -109,7 +135,7 @@ export default class Events extends Component {
         return (
             <div className='row'>
                 <div className='col-10 col-md-8 col-lg-7 mx-auto mt-5 my-sm-4 p-3 text-align-center border-secondary'>
-                    <h4>Create your own Events !!!</h4>
+                    <h4>Create your own Events !!</h4>
                     <Button
                         color={"secondary"}
                         onClick={this.toggleModal}
@@ -117,14 +143,13 @@ export default class Events extends Component {
                         Create Event
                     </Button>
                 </div>
-                <div className='col-11 col-md-9 col-lg-8 mx-auto'>
-                    {this.state.events &&
-                        this.state.events
-                            .reverse()
-                            .map((event) => (
-                                <Event event={event} key={event._id} />
-                            ))}
-                </div>
+                {this.state.isLoading && (
+                    <div className='col-12 d-flex justify-content-center'>
+                        <Spinner height='100px' />
+                    </div>
+                )}
+
+                <EventList events={this.state.events} user={this.context} />
                 <Modal isOpen={this.state.modal} toggle={this.toggleModal}>
                     <ModalHeader toggle={this.toggleModal}>
                         Modal title
