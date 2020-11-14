@@ -55,4 +55,4 @@ const transformEvent = (event) => {
     };
 };
 
-module.exports = { transformEvent, transformBooking };
+module.exports = { transformEvent, transformBooking, singleEvent };
