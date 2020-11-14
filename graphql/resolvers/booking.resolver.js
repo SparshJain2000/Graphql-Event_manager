@@ -3,7 +3,8 @@ const Event = require("../../models/event.model"),
     { transformEvent, transformBooking } = require("./merge");
 
 module.exports = {
-    bookings: async (req) => {
+    bookings: async (args, req) => {
+        // console.log(req);
         if (!req.isAuth) throw new Error("Not Authenticated");
         try {
             const bookings = await Booking.find();
