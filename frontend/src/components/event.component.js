@@ -1,18 +1,48 @@
-import React, { useState } from "react";
-import {
-    Button,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Label,
-    FormGroup,
-    Input,
-} from "reactstrap";
+import Axios from "axios";
+import React, { useState, useContext } from "react";
+import { useHistory } from "react-router";
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import "../stylesheets/event.css";
+import AuthContext from "../context/auth-context";
+
 export default Event = ({ event, user }) => {
+    const context = useContext(AuthContext);
+    const history = useHistory();
     const [modal, setModal] = useState(false);
     const toggleModal = () => setModal(!modal);
+    const bookEvent = () => {
+        const query = `
+            mutation {
+                bookEvent(eventId:"${event._id}"){
+                    _id 
+                    createdAt
+                    updatedAt
+                }
+            }
+        `;
+        Axios.post(
+            `http://localhost:8080/graphql`,
+            { query },
+            {
+                headers: {
+                    Authorization: `Bearer ${context.token}`,
+                },
+            },
+        )
+            .then((result) => {
+                console.log(result);
+                const data = result?.data?.data;
+                console.log(data);
+                if (!data.bookEvent && result?.data.errors) {
+                    context.logout();
+                    history.push("/auth/signin");
+                } else {
+                    console.log("Booked !!");
+                    toggleModal();
+                }
+            })
+            .catch((err) => console.log(err.response));
+    };
     return (
         <div
             className='border-secondary row p-3 event my-2  mx-1 d-flex justify-content-center align-content-center'
@@ -70,7 +100,7 @@ export default Event = ({ event, user }) => {
                     <p>{event.description}</p>
                 </ModalBody>
                 <ModalFooter>
-                    <Button color='secondary' onClick={toggleModal}>
+                    <Button color='secondary' onClick={bookEvent}>
                         Book Event
                     </Button>
                     <Button color='outline-secondary' onClick={toggleModal}>
