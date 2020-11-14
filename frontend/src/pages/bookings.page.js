@@ -2,6 +2,12 @@ import Axios from "axios";
 import React, { Component } from "react";
 import AuthContext from "../context/auth-context";
 import Spinner from "../components/spinner.component";
+import Booking from "../components/booking.component";
+const BookingList = ({ bookings, cancelBooking }) => {
+    return bookings.map((booking) => (
+        <Booking booking={booking} cancelBooking={cancelBooking} />
+    ));
+};
 export default class Bookings extends Component {
     state = {
         bookings: null,
@@ -50,49 +56,62 @@ export default class Bookings extends Component {
                     this.setState({ isLoading: false });
                 });
     };
+    cancelBooking = (id) => {
+        console.log(id);
+        const query = `
+        mutation {
+            cancelBooking(bookingId:"${id}"){
+                title
+                _id
+                creator{
+                    email
+                }   
+            }
+        }
+        `;
+        if (this.context.token)
+            Axios.post(
+                `http://localhost:8080/graphql`,
+                { query },
+                {
+                    headers: {
+                        Authorization: `Bearer ${this.context.token}`,
+                    },
+                },
+            )
+                .then((result) => {
+                    const data = result?.data?.data?.cancelBooking;
+                    console.log(data);
+                    if (data) {
+                        let { bookings } = this.state;
+                        bookings = bookings.filter(
+                            (booking) => booking._id !== id,
+                        );
+                        this.setState({ bookings });
+                    }
+                    this.setState({ isLoading: false });
+                })
+                .catch((err) => {
+                    console.log(err);
+                    console.log(err.response);
+                    this.setState({ isLoading: false });
+                });
+    };
     render() {
         return (
-            <div>
-                <h1>Bookings Working 🥳</h1>
+            <div className='col-12 col-sm-10 col-md-8 col-lg-7 mx-auto my-3 mt-5 mt-sm-3'>
+                <h1 className='text-align-center my-2'>Your Bookings 📜</h1>
                 {this.state.isLoading ? (
                     <div className='col-12 d-flex justify-content-center'>
                         <Spinner height='100px' />
                     </div>
                 ) : (
-                    this.state.bookings &&
-                    this.state.bookings.map((booking) => (
-                        <div>
-                            <p>{booking._id}</p>
-                            <p>
-                                {new Intl.DateTimeFormat("en-US", {
-                                    year: "numeric",
-                                    month: "long",
-                                    day: "numeric",
-                                    hour: "numeric",
-                                    minute: "numeric",
-                                }).format(new Date(booking.createdAt))}
-                            </p>
-                            <p>
-                                {new Intl.DateTimeFormat("en-US", {
-                                    year: "numeric",
-                                    month: "long",
-                                    day: "numeric",
-                                    hour: "numeric",
-                                    minute: "numeric",
-                                }).format(new Date(booking.updatedAt))}
-                            </p>
-                            <p>{booking.event.title}</p>
-                            <p>
-                                {new Intl.DateTimeFormat("en-US", {
-                                    year: "numeric",
-                                    month: "long",
-                                    day: "numeric",
-                                    hour: "numeric",
-                                    minute: "numeric",
-                                }).format(new Date(booking.event.date))}
-                            </p>
-                        </div>
-                    ))
+                    this.state.bookings && (
+                        <BookingList
+                            bookings={this.state.bookings}
+                            cancelBooking={this.cancelBooking}
+                        />
+                    )
                 )}
             </div>
         );
