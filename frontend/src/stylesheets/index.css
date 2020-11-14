@@ -11,6 +11,7 @@
     --bg: #f0f0f0;
     --bg-alt: #e2e2e2;
     --alt: 245, 181, 7;
+    --shadow: 23, 23, 23
 }
 
 .dark {
@@ -24,6 +25,7 @@
     --bg: #525252;
     --bg-alt: #1a1a2e;
     --alt: 49, 49, 49;
+    --shadow: 230, 230, 230
     /* --bg: #f7f7f7; */
 }
 
@@ -66,7 +68,8 @@ h5 {
     font-family: "Raleway", sans-serif;
 }
 
-input {
+input,
+textarea {
     color: var(--text)!important
 }
 
@@ -75,7 +78,7 @@ input {
 }
 
 .Raleway {
-    font-size: 24px;
+    font-size: 18px;
     font-family: "Raleway", sans-serif;
 }
 
