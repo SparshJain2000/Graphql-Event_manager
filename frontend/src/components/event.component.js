@@ -9,14 +9,15 @@ import {
     FormGroup,
     Input,
 } from "reactstrap";
+import "../stylesheets/event.css";
 export default Event = ({ event, user }) => {
     const [modal, setModal] = useState(false);
     const toggleModal = () => setModal(!modal);
     return (
         <div
-            className='border-secondary p-3  my-2 d-flex justify-content-between align-content-center'
+            className='border-secondary row p-3 event my-2  mx-1 d-flex justify-content-center align-content-center'
             key={event._id}>
-            <div>
+            <div className='col-12 col-sm-9 px-0 mb-3 mb-sm-0'>
                 <h3 className='color-secondary'>{event.title}</h3>
                 <h6>
                     {new Intl.NumberFormat("en-IN", {
@@ -34,9 +35,13 @@ export default Event = ({ event, user }) => {
                 </h6>
             </div>
 
-            <div className='my-auto' style={{ height: "fit-content" }}>
+            <div
+                className='col-12 col-sm-3 px-0 my-auto d-flex justify-content-center justify-content-sm-end'
+                style={{ height: "fit-content" }}>
                 {user.userId === event.creator._id ? (
-                    <p className='Raleway color-secondary'>Your Event</p>
+                    <Button color='secondary' onClick={toggleModal}>
+                        Edit Event
+                    </Button>
                 ) : (
                     <Button color='outline-secondary' onClick={toggleModal}>
                         View Details
