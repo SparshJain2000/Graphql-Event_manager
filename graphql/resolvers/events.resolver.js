@@ -1,6 +1,6 @@
 const User = require("../../models/user.model"),
     Event = require("../../models/event.model"),
-    { transformEvent } = require("./merge");
+    { transformEvent, singleEvent } = require("./merge");
 
 module.exports = {
     events: async () => {
@@ -12,7 +12,9 @@ module.exports = {
             throw err;
         }
     },
-
+    event: async (args) => {
+        return singleEvent(args.id);
+    },
     createEvent: async (args, req) => {
         if (!req.isAuth) throw new Error("Not Authenticated");
         const event = new Event({
