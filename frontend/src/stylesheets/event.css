@@ -1,0 +1,9 @@
+.event {
+    transition: .2s ease-in-out
+}
+
+.event:hover {
+    box-shadow: 2px 2px 8px rgba(var(--shadow), .3);
+    transform: scale(1.01);
+    transition: .2s ease-in-out
+}
