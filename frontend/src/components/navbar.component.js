@@ -44,7 +44,8 @@ const NavbarComponent = ({ user, logout }) => {
                     <Link
                         to='/'
                         className='navbar-brand Raleway text-align-center'>
-                        EasyBookings
+                        📝EasyBookings
+                        {/* 📑📝📋 */}
                     </Link>
                     {/* <button
                         class='btn btn-outline-secondary my-2 my-sm-0'

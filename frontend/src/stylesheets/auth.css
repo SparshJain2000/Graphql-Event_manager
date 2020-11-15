@@ -8,7 +8,8 @@
     border: 1px solid var(--primary)!important;
 }
 
-input {
+input,
+textarea {
     background-color: var(--bg)!important;
     /* border-color: var(--primary)!important */
 }

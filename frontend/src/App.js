@@ -15,7 +15,6 @@ class App extends Component {
         userId: null,
     };
     componentDidMount() {
-        console.log(document.body.classList);
         if (localStorage.getItem("theme")) {
             document.body.classList = localStorage.getItem("theme");
         } else localStorage.setItem("theme", "light");
