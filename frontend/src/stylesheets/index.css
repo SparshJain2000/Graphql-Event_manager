@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Merriweather&display=swap&family=Open+Sans&family=Raleway&family=Montserrat:wght@400;600&family=Open+Sans&display=swap&family=Chivo:wght@400&famliy=Lobster&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap&family=Raleway:wght@400;600");
 .light {
     --text: #6e6d6d;
     --primary: #787b86;
@@ -32,6 +32,12 @@
 #root {
     min-height: 100vh;
     background-color: var(--bg)!important;
+    position: relative;
+    padding-bottom: 100px;
+    /* display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: space-between; */
 }
 
 * {
@@ -47,7 +53,7 @@ html {
 body {
     margin: 0;
     padding-right: 0 !important;
-    font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    font-family: 'Noto Sans JP', 'Open Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif!important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     /* overflow-x: hidden; */
@@ -75,6 +81,10 @@ textarea {
 
 .color-secondary {
     color: var(--secondary)!important;
+}
+
+.color-primary {
+    color: var(--primary)!important;
 }
 
 .Raleway {
@@ -332,10 +342,11 @@ a:hover {
     box-shadow: 0 0 0 0.2rem rgba(var(--alt), .3);
 }
 
-.svg-inline--fa path {
+
+/* .svg-inline--fa path {
     color: white;
-    /* color: var(--text); */
-}
+    color: var(--text);
+} */
 
 .alert-danger {
     color: white!important;
