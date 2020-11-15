@@ -3,11 +3,14 @@ import React, { Component } from "react";
 import AuthContext from "../context/auth-context";
 import Spinner from "../components/spinner.component";
 import Booking from "../components/booking.component";
-const BookingList = ({ bookings, cancelBooking }) => {
-    return bookings.map((booking) => (
-        <Booking booking={booking} cancelBooking={cancelBooking} />
+const BookingList = ({ bookings, cancelBooking }) =>
+    bookings.map((booking) => (
+        <Booking
+            booking={booking}
+            cancelBooking={cancelBooking}
+            key={booking._id}
+        />
     ));
-};
 export default class Bookings extends Component {
     state = {
         bookings: null,
@@ -36,7 +39,7 @@ export default class Bookings extends Component {
 
         if (this.context.token)
             Axios.post(
-                `http://localhost:8080/graphql`,
+                `${process.env.REACT_APP_API_URL}`,
                 { query },
                 {
                     headers: {
@@ -71,7 +74,7 @@ export default class Bookings extends Component {
         `;
         if (this.context.token)
             Axios.post(
-                `http://localhost:8080/graphql`,
+                `${process.env.REACT_APP_API_URL}`,
                 { query },
                 {
                     headers: {
@@ -99,8 +102,8 @@ export default class Bookings extends Component {
     };
     render() {
         return (
-            <div className='col-12 col-sm-10 col-md-8 col-lg-7 mx-auto my-3 mt-5 mt-sm-3'>
-                <h1 className='text-align-center my-2'>Your Bookings 📜</h1>
+            <div className='col-12 col-sm-10 col-md-9 col-lg-7 mx-auto my-3 mt-5 mt-sm-3'>
+                <h2 className='text-align-center my-3'>Your Bookings 📜</h2>
                 {this.state.isLoading ? (
                     <div className='col-12 d-flex justify-content-center'>
                         <Spinner height='100px' />

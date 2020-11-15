@@ -16,6 +16,7 @@ const Booking = ({ booking, cancelBooking }) => {
     const cancel = () => {
         cancelBooking(booking._id);
         toggleModal();
+        toggleModalDetails();
     };
     const showDetails = () => {
         console.log("SHOW it");
@@ -32,10 +33,10 @@ const Booking = ({ booking, cancelBooking }) => {
                 }
             }
         `;
-            Axios.post(`http://localhost:8080/graphql`, { query })
+            Axios.post(`${process.env.REACT_APP_API_URL}`, { query })
                 .then((result) => {
                     const data = result?.data?.data?.event;
-                    console.log(data);
+                    console.log(booking.event, data);
                     if (data) setEvent(data);
                 })
                 .catch((err) => {
@@ -46,7 +47,7 @@ const Booking = ({ booking, cancelBooking }) => {
     };
     return (
         <div
-            className='border-secondary row p-3 event my-2  mx-1 d-flex justify-content-center align-content-center'
+            className='border-secondary row mx-0 p-3 event my-2  mx-1 d-flex justify-content-center align-content-center'
             key={booking._id}>
             <div className='col-12 col-sm-7 px-0 mb-3 mb-sm-0'>
                 <h5 className='color-primary'>{booking.event.title}</h5>
@@ -62,7 +63,7 @@ const Booking = ({ booking, cancelBooking }) => {
             </div>
 
             <div
-                className='col-12 col-sm-5 px-0 my-auto row justify-content-center justify-content-sm-end'
+                className='col-12 col-sm-5 px-0 my-auto row mx-0 justify-content-center justify-content-sm-end'
                 style={{ height: "fit-content" }}>
                 <Button color='outline-secondary' onClick={showDetails}>
                     View Details
@@ -78,7 +79,8 @@ const Booking = ({ booking, cancelBooking }) => {
             <Modal isOpen={modal} toggle={toggleModal}>
                 <ModalHeader toggle={toggleModal}>Cancel Event</ModalHeader>
                 <ModalBody>
-                    Are you sure you want to cancel this Event ?
+                    Are you sure you want to cancel this Event:{" "}
+                    {booking.event.title} ?
                 </ModalBody>
                 <ModalFooter>
                     <Button color='secondary' onClick={cancel}>

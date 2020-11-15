@@ -21,7 +21,7 @@ export default Event = ({ event, user }) => {
             }
         `;
         Axios.post(
-            `http://localhost:8080/graphql`,
+            `${process.env.REACT_APP_API_URL}`,
             { query },
             {
                 headers: {

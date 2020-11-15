@@ -55,7 +55,7 @@ export default class Events extends Component {
                         }
                     }
                 }`;
-        Axios.post(`http://localhost:8080/graphql`, { query })
+        Axios.post(`${process.env.REACT_APP_API_URL}`, { query })
             .then((result) => {
                 const data = result?.data?.data?.events;
                 console.log(data);
@@ -69,7 +69,7 @@ export default class Events extends Component {
     };
     toggleModal = () => this.setState({ modal: !this.state.modal });
     createEvent = () => {
-        // console.log(this.context);
+        // console.log(this.context)
         const valid =
             this.state.title.trim().length > 0 &&
             this.state.description.trim().length > 0 &&
@@ -82,12 +82,12 @@ export default class Events extends Component {
                 },
             };
             const query = `
-                mutation {
+                mutation CreateEvent($title:String!,$description:String!,$date:String!,$price:Float!){
                 createEvent(eventInput:{
-                    title:"${this.state.title}"
-                    description:"${this.state.description}"
-                    price:${+this.state.price}
-                    date:"${this.state.date}"
+                    title:$title
+                    description:$description
+                    price:$price
+                    date:$date
                 }){
                     title
                     price
@@ -102,7 +102,17 @@ export default class Events extends Component {
                 }
                 }
             `;
-            Axios.post(`http://localhost:8080/graphql`, { query }, config)
+            const variables = {
+                title: this.state.title,
+                description: this.state.description,
+                date: this.state.date,
+                price: +this.state.price,
+            };
+            Axios.post(
+                `${process.env.REACT_APP_API_URL}`,
+                { query, variables },
+                config,
+            )
                 .then((result) => {
                     console.log(result);
                     const data = result?.data?.data;
@@ -114,7 +124,10 @@ export default class Events extends Component {
                         // console.log(data.createEvent);
                         // let newEvents = this.state.events;
                         const newEvents = [
-                            data.createEvent,
+                            {
+                                ...data.createEvent,
+                                creator: { _id: this.context.userId },
+                            },
                             ...this.state.events,
                         ];
                         console.log(newEvents);
@@ -133,7 +146,7 @@ export default class Events extends Component {
     };
     render() {
         return (
-            <div className='row'>
+            <div className='row m-0'>
                 <div className='col-10 col-md-8 col-lg-7 mx-auto mt-5 my-sm-4 p-3 text-align-center border-secondary'>
                     <h4>Create your own Events !!</h4>
                     <Button
