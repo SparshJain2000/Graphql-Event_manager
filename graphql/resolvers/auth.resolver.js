@@ -14,7 +14,16 @@ module.exports = {
                 password: hashed,
             });
             const result = await newUser.save();
-            return { ...result._doc, password: null };
+            const token = jwt.sign(
+                { userId: result.id, email: result.email },
+                process.env.secret,
+                { expiresIn: "1h" },
+            );
+            return {
+                userId: result.id,
+                token,
+                tokenExpiration: 1,
+            };
         } catch (err) {
             console.log(err);
             throw err;
