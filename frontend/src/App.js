@@ -5,6 +5,7 @@ import Bookings from "./pages/bookings.page";
 import Auth from "./pages/auth.page";
 import Events from "./pages/events.page";
 import Navbar from "./components/navbar.component";
+import Footer from "./components/footer.component";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLightbulb } from "@fortawesome/free-solid-svg-icons";
 import AuthContext from "./context/auth-context";
@@ -88,6 +89,7 @@ class App extends Component {
                                 )}
                             </Switch>
                         </main>
+                        <Footer />
                     </AuthContext.Provider>
                 </React.Fragment>
             </BrowserRouter>
