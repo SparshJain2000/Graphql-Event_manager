@@ -1,13 +1,19 @@
 const Event = require("../../models/event.model");
 const User = require("../../models/user.model");
+const DataLoader = require("dataloader");
 const { dateToString } = require("../../helpers/date.helper");
+
+const eventLoader = new DataLoader((eventIds) => events(eventIds));
+const userLoader = new DataLoader((userIds) => {
+    return User.find({ _id: { $in: userIds } });
+});
 
 const user = async (id) => {
     try {
-        const user = await User.findById(id);
+        const user = await userLoader.load(id.toString());
         return {
             ...user._doc,
-            createdEvents: events.bind(this, user._doc.createdEvents),
+            createdEvents: () => eventLoader.loadMany(user._doc.createdEvents),
         };
     } catch (err) {
         console.log(err);
@@ -17,13 +23,11 @@ const user = async (id) => {
 const events = async (ids) => {
     try {
         const events = await Event.find({ _id: { $in: ids } });
-        return events.map((event) => {
-            return {
-                ...event._doc,
-                date: dateToString(event._doc.date),
-                creator: user.bind(this, event.creator),
-            };
-        });
+        events.sort(
+            (a, b) =>
+                ids.indexOf(a._id.toString()) - ids.indexOf(b._id.toString()),
+        );
+        return events.map((event) => transformEvent(event));
     } catch (err) {
         console.log(err);
         throw err;
@@ -31,8 +35,8 @@ const events = async (ids) => {
 };
 const singleEvent = async (eventId) => {
     try {
-        const event = await Event.findById(eventId);
-        return transformEvent(event);
+        const event = await eventLoader.load(eventId.toString());
+        return event;
     } catch (err) {
         console.log(err);
         throw err;
