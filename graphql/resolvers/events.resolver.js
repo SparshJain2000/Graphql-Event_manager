@@ -41,4 +41,22 @@ module.exports = {
             throw err;
         }
     },
+    updateEvent: async (args, req) => {
+        console.log(args);
+        if (!req.isAuth) throw new Error("Not Authenticated");
+        if (req.userId !== args.eventInput.creatorId)
+            throw new Error("Not Authorized");
+        const { _id, creatorId, ...data } = args.eventInput;
+        try {
+            let updated = await Event.findOneAndUpdate(
+                { _id: args.eventInput._id },
+                data,
+            );
+            updated = { ...transformEvent(updated), ...data };
+            return updated;
+        } catch (err) {
+            console.log(err);
+            throw err;
+        }
+    },
 };
