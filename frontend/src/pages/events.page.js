@@ -13,12 +13,17 @@ import {
 import AuthContext from "../context/auth-context";
 import Event from "../components/event.component";
 import Spinner from "../components/spinner.component";
-const EventList = ({ events, user }) => {
+const EventList = ({ events, user, updateEventsList }) => {
     return (
         <div className='col-11 col-md-9 col-lg-8 mx-auto'>
             {events &&
                 events.map((event) => (
-                    <Event event={event} key={event._id} user={user} />
+                    <Event
+                        event={event}
+                        key={event._id}
+                        user={user}
+                        updateEventsList={updateEventsList}
+                    />
                 ))}
         </div>
     );
@@ -144,6 +149,21 @@ export default class Events extends Component {
     handleChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
     };
+    updateEventsList = (updatedEvent) => {
+        let events = this.state.events.map((event) => {
+            if (event._id === updatedEvent._id) {
+                event = { ...event, ...updatedEvent };
+                event = {
+                    ...event,
+                    creator: { _id: this.context.userId },
+                };
+            }
+            return event;
+        });
+        this.setState({
+            events,
+        });
+    };
     render() {
         return (
             <div className='row m-0'>
@@ -162,7 +182,11 @@ export default class Events extends Component {
                     </div>
                 )}
 
-                <EventList events={this.state.events} user={this.context} />
+                <EventList
+                    events={this.state.events}
+                    user={this.context}
+                    updateEventsList={this.updateEventsList}
+                />
                 <Modal isOpen={this.state.modal} toggle={this.toggleModal}>
                     <ModalHeader toggle={this.toggleModal}>
                         Modal title
