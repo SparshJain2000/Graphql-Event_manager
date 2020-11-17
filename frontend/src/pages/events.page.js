@@ -13,7 +13,7 @@ import {
 import AuthContext from "../context/auth-context";
 import Event from "../components/event.component";
 import Spinner from "../components/spinner.component";
-const EventList = ({ events, user, updateEventsList }) => {
+const EventList = ({ events, user, updateEventsList, deleteEventHandler }) => {
     return (
         <div className='col-11 col-md-9 col-lg-8 mx-auto'>
             {events &&
@@ -23,6 +23,7 @@ const EventList = ({ events, user, updateEventsList }) => {
                         key={event._id}
                         user={user}
                         updateEventsList={updateEventsList}
+                        deleteEventHandler={deleteEventHandler}
                     />
                 ))}
         </div>
@@ -164,10 +165,14 @@ export default class Events extends Component {
             events,
         });
     };
+    deleteEventHandler = (id) => {
+        const events = this.state.events.filter((event) => event._id !== id);
+        this.setState({ events });
+    };
     render() {
         return (
             <div className='row m-0'>
-                <div className='col-10 col-md-8 col-lg-7 mx-auto mt-5 my-sm-4 p-3 text-align-center border-secondary'>
+                <div className='col-10 col-md-9 col-lg-8 col-xl-7 mx-auto mt-5 my-sm-4 p-3 text-align-center border-secondary'>
                     <h4>Create your own Events !!</h4>
                     <Button
                         color={"secondary"}
@@ -186,6 +191,7 @@ export default class Events extends Component {
                     events={this.state.events}
                     user={this.context}
                     updateEventsList={this.updateEventsList}
+                    deleteEventHandler={this.deleteEventHandler}
                 />
                 <Modal isOpen={this.state.modal} toggle={this.toggleModal}>
                     <ModalHeader toggle={this.toggleModal}>
