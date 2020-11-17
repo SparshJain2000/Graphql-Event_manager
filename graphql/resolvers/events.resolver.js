@@ -1,3 +1,4 @@
+const Booking = require("../../models/booking.model");
 const User = require("../../models/user.model"),
     Event = require("../../models/event.model"),
     { transformEvent, singleEvent } = require("./merge");
@@ -26,7 +27,6 @@ module.exports = {
         // * return to perform async
         try {
             const result = await event.save();
-            console.log({ ...result._doc });
             createdEvent = transformEvent(result);
             const userFound = await User.findById(req.userId);
             if (!userFound) {
@@ -34,7 +34,6 @@ module.exports = {
             }
             userFound.createdEvents.push(event);
             await userFound.save();
-            // console.log(result);
             return createdEvent;
         } catch (err) {
             console.log(err);
@@ -42,7 +41,6 @@ module.exports = {
         }
     },
     updateEvent: async (args, req) => {
-        console.log(args);
         if (!req.isAuth) throw new Error("Not Authenticated");
         if (req.userId !== args.eventInput.creatorId)
             throw new Error("Not Authorized");
@@ -54,6 +52,20 @@ module.exports = {
             );
             updated = { ...transformEvent(updated), ...data };
             return updated;
+        } catch (err) {
+            console.log(err);
+            throw err;
+        }
+    },
+    deleteEvent: async (args, req) => {
+        if (!req.isAuth) throw new Error("Not Authenticated");
+        if (req.userId !== args.creatorId) throw new Error("Not Authorized");
+        try {
+            const event = await Event.findById(args.eventId);
+            if (!event) throw new Error("Event not found");
+            await Event.deleteOne({ _id: args.eventId });
+            await Booking.deleteMany({ event: args.eventId });
+            return transformEvent(event);
         } catch (err) {
             console.log(err);
             throw err;
