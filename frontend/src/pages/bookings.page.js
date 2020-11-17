@@ -48,10 +48,17 @@ export default class Bookings extends Component {
                 },
             )
                 .then((result) => {
-                    const data = result?.data?.data?.bookings;
-                    console.log(data);
-                    if (data) this.setState({ bookings: data.reverse() });
-                    this.setState({ isLoading: false });
+                    const data = result?.data?.data;
+                    if (!data.bookings && result?.data.errors) {
+                        this.context.logout();
+                        this.props.history.push("/auth/signin");
+                    } else {
+                        console.log(data);
+                        this.setState({
+                            bookings: data.bookings.reverse(),
+                        });
+                        this.setState({ isLoading: false });
+                    }
                 })
                 .catch((err) => {
                     console.log(err);
