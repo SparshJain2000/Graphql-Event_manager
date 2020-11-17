@@ -1,6 +1,12 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { Component } from "react";
-import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
+import {
+    BrowserRouter,
+    Redirect,
+    Route,
+    Switch,
+    withRouter,
+} from "react-router-dom";
 import Bookings from "./pages/bookings.page";
 import Auth from "./pages/auth.page";
 import Events from "./pages/events.page";
@@ -10,6 +16,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLightbulb } from "@fortawesome/free-solid-svg-icons";
 import AuthContext from "./context/auth-context";
 class App extends Component {
+    constructor(props) {
+        super(props);
+    }
     state = {
         token: null,
         userId: null,
@@ -19,10 +28,14 @@ class App extends Component {
             document.body.classList = localStorage.getItem("theme");
         } else localStorage.setItem("theme", "light");
 
-        if (localStorage.getItem("user")) {
-            const user = JSON.parse(localStorage.getItem("user"));
-            this.setState({ ...user });
-        } else localStorage.setItem("user", JSON.stringify(this.state));
+        if (sessionStorage.getItem("user")) {
+            const user = JSON.parse(sessionStorage.getItem("user"));
+            console.log(new Date(user.expiry) > new Date());
+            if (new Date(user.expiry) < new Date()) {
+                console.log("EXPIRED !!!");
+                this.logout();
+            } else this.setState({ ...user });
+        } else sessionStorage.setItem("user", JSON.stringify(this.state));
     }
     changeTheme() {
         console.log(localStorage.getItem("theme"));
@@ -36,11 +49,18 @@ class App extends Component {
     }
     login = (token, userId) => {
         this.setState({ token, userId });
-        localStorage.setItem("user", JSON.stringify({ token, userId }));
+        sessionStorage.setItem(
+            "user",
+            JSON.stringify({
+                token,
+                userId,
+                expiry: new Date(new Date().getTime() + 60000 * 1),
+            }),
+        );
     };
     logout = () => {
         this.setState({ token: null, userId: null });
-        localStorage.removeItem("user");
+        sessionStorage.removeItem("user");
     };
     render() {
         return (
@@ -68,7 +88,10 @@ class App extends Component {
                         <main>
                             <Switch>
                                 {this.state.token && (
-                                    <Redirect from='/' to='/events' exact />
+                                    <Route
+                                        path='/bookings'
+                                        component={Bookings}
+                                    />
                                 )}
                                 {this.state.token && (
                                     <Redirect from='/auth' to='/events' />
@@ -77,10 +100,7 @@ class App extends Component {
                                     <Route path='/auth' component={Auth} />
                                 )}
                                 {this.state.token && (
-                                    <Route
-                                        path='/bookings'
-                                        component={Bookings}
-                                    />
+                                    <Redirect from='/' exact to='/events' />
                                 )}
                                 <Route path='/events' component={Events} />
                                 {!this.state.token && (
