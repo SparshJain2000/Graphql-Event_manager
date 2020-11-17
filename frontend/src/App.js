@@ -54,7 +54,7 @@ class App extends Component {
             JSON.stringify({
                 token,
                 userId,
-                expiry: new Date(new Date().getTime() + 60000 * 1),
+                expiry: new Date(new Date().getTime() + 60000 * 60),
             }),
         );
     };
