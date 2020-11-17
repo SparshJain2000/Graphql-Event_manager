@@ -18,7 +18,12 @@ const formatDate = (date) => {
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
     return now.toISOString().slice(0, -1);
 };
-export default Event = ({ event, user, updateEventsList }) => {
+export default Event = ({
+    event,
+    user,
+    updateEventsList,
+    deleteEventHandler,
+}) => {
     const context = useContext(AuthContext);
     const history = useHistory();
     const [modal, setModal] = useState(false);
@@ -26,6 +31,43 @@ export default Event = ({ event, user, updateEventsList }) => {
     const [data, setData] = useState(event);
     const toggleModal = () => setModal(!modal);
     const toggleModalUpdate = () => setModalUpdate(!modalUpdate);
+    const deleteEvent = () => {
+        const variables = {
+            _id: event._id,
+            creatorId: event.creator._id,
+        };
+        let config = {
+            headers: {
+                Authorization: `Bearer ${context.token}`,
+            },
+        };
+        const query = `
+                mutation CancelEvent($_id:ID!,$creatorId:ID!){
+                    deleteEvent(eventId:$_id,creatorId:$creatorId){
+                        title
+                        _id    
+                    }
+                }
+            `;
+        Axios.post(
+            `${process.env.REACT_APP_API_URL}`,
+            { query, variables },
+            config,
+        )
+            .then((result) => {
+                console.log(result);
+                const data = result?.data?.data;
+                console.log(data);
+                if (!data.deleteEvent && result?.data.errors) {
+                    context.logout();
+                    history.push("/auth/signin");
+                } else {
+                    deleteEventHandler(event._id);
+                }
+                // toggleModalUpdate();
+            })
+            .catch((err) => console.log(err.response));
+    };
     const updateEvent = () => {
         let { creator, ...updatedEvent } = data;
         updatedEvent.creatorId = creator._id;
@@ -130,9 +172,9 @@ export default Event = ({ event, user, updateEventsList }) => {
     };
     return (
         <div
-            className='border-secondary row p-3 event my-2  mx-1 d-flex justify-content-center align-content-center'
+            className='border-secondary row p-3 event my-2 mx-1 d-flex justify-content-center align-content-center'
             key={event._id}>
-            <div className='col-12 col-sm-9 px-0 mb-3 mb-sm-0'>
+            <div className='col-12 col-sm-7 col-md-8 px-0 mb-3 mb-sm-0'>
                 <h3 className='color-secondary'>{event.title}</h3>
                 <h6>
                     {new Intl.NumberFormat("en-IN", {
@@ -151,12 +193,20 @@ export default Event = ({ event, user, updateEventsList }) => {
             </div>
 
             <div
-                className='col-12 col-sm-3 px-0 my-auto d-flex justify-content-center justify-content-sm-end'
+                className='col-12 col-sm-5 col-md-4 px-0 my-auto d-flex justify-content-center justify-content-sm-end'
                 style={{ height: "fit-content" }}>
                 {user.userId === event.creator._id ? (
-                    <Button color='secondary' onClick={toggleModalUpdate}>
-                        Edit Event
-                    </Button>
+                    <React.Fragment>
+                        <Button
+                            color='outline-secondary'
+                            className='mr-1'
+                            onClick={deleteEvent}>
+                            Delete Event
+                        </Button>
+                        <Button color='secondary' onClick={toggleModalUpdate}>
+                            Edit Event
+                        </Button>
+                    </React.Fragment>
                 ) : (
                     <Button color='outline-secondary' onClick={toggleModal}>
                         View Details
