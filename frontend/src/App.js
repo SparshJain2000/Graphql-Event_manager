@@ -1,12 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { Component } from "react";
-import {
-    BrowserRouter,
-    Redirect,
-    Route,
-    Switch,
-    withRouter,
-} from "react-router-dom";
+import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import Bookings from "./pages/bookings.page";
 import Auth from "./pages/auth.page";
 import Events from "./pages/events.page";
@@ -16,9 +10,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLightbulb } from "@fortawesome/free-solid-svg-icons";
 import AuthContext from "./context/auth-context";
 class App extends Component {
-    constructor(props) {
-        super(props);
-    }
     state = {
         token: null,
         userId: null,
