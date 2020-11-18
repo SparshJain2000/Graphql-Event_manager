@@ -1,13 +1,9 @@
 import Axios from "axios";
-import React, { useState, useContext } from "react";
-import { useHistory } from "react-router";
+import React, { useState } from "react";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import "../stylesheets/event.css";
-import AuthContext from "../context/auth-context";
 import Spinner from "../components/spinner.component";
 const Booking = ({ booking, cancelBooking }) => {
-    const context = useContext(AuthContext);
-    const history = useHistory();
     const [event, setEvent] = useState(null);
     const [modal, setModal] = useState(false);
     const [modalDetails, setModalDetails] = useState(false);

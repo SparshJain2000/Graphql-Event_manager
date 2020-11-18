@@ -18,12 +18,7 @@ const formatDate = (date) => {
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
     return now.toISOString().slice(0, -1);
 };
-export default Event = ({
-    event,
-    user,
-    updateEventsList,
-    deleteEventHandler,
-}) => {
+const Event = ({ event, user, updateEventsList, deleteEventHandler }) => {
     const context = useContext(AuthContext);
     const history = useHistory();
     const [modal, setModal] = useState(false);
@@ -297,3 +292,5 @@ export default Event = ({
         </div>
     );
 };
+
+export default Event;

@@ -64,7 +64,7 @@ export default class Events extends Component {
         Axios.post(`${process.env.REACT_APP_API_URL}`, { query })
             .then((result) => {
                 const data = result?.data?.data?.events;
-                console.log(data);
+
                 if (data) this.setState({ events: data.reverse() });
                 this.setState({ isLoading: false });
             })
@@ -120,9 +120,7 @@ export default class Events extends Component {
                 config,
             )
                 .then((result) => {
-                    console.log(result);
                     const data = result?.data?.data;
-                    console.log(data);
                     if (!data.createEvent && result?.data.errors) {
                         this.context.logout();
                         this.props.history.push("/auth/signin");

@@ -36,7 +36,7 @@ export default class Signin extends Component {
         });
     };
     validateEmail = (email) => {
-        const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        const re = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
         return re.test(email);
     };
     validatePassword = (pass) => pass.length >= 8;
@@ -55,14 +55,12 @@ export default class Signin extends Component {
 
     submit = (e) => {
         e.preventDefault();
-        console.log(this.state.invalid.email);
-        console.log(this.state.invalid.password);
         if (this.state.invalid.password && this.state.invalid.email) {
             const credentials = {
                 email: this.state.email,
                 password: this.state.password,
             };
-            console.log(credentials);
+
             const query = `
                 mutation {
                     createUser(userInput:{email:"${credentials.email}",password:"${credentials.password}"}){
@@ -73,7 +71,7 @@ export default class Signin extends Component {
                 }
 
             `;
-            console.log(query);
+
             axios
                 .post(`${process.env.REACT_APP_API_URL}`, { query })
                 .then((data) => {
@@ -84,7 +82,6 @@ export default class Signin extends Component {
                             mess: data.data.errors[0].message,
                         });
                     } else {
-                        console.log(data.data.data.createUser);
                         const userData = data?.data?.data?.createUser;
                         if (userData && userData.token) {
                             this.context.login(

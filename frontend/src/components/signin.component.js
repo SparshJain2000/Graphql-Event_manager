@@ -10,7 +10,7 @@ import {
 } from "reactstrap";
 import "../stylesheets/auth.css";
 import AuthNav from "./authNav.component";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import AuthContext from "../context/auth-context";
 export default class Signin extends Component {
@@ -36,7 +36,7 @@ export default class Signin extends Component {
         });
     };
     validateEmail = (email) => {
-        const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        const re = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
         return re.test(email);
     };
     validatePassword = (pass) => pass.trim().length > 0;
@@ -55,8 +55,6 @@ export default class Signin extends Component {
 
     submit = (e) => {
         e.preventDefault();
-        console.log(this.state.invalid.email);
-        console.log(this.state.invalid.password);
         if (this.state.invalid.password && this.state.invalid.email) {
             const credentials = {
                 email: this.state.email,
@@ -71,18 +69,16 @@ export default class Signin extends Component {
                     }
                 }
             `;
-            console.log(query);
+
             axios
                 .post(`${process.env.REACT_APP_API_URL}`, { query })
                 .then((data) => {
-                    console.log(data);
                     if (data.data.errors) {
                         this.setState({
                             visible: true,
                             mess: data.data.errors[0].message,
                         });
                     } else {
-                        console.log(data.data.data.login);
                         const userData = data?.data?.data?.login;
                         if (userData && userData.token) {
                             this.context.login(
@@ -96,7 +92,6 @@ export default class Signin extends Component {
                 })
                 .catch((err) => {
                     console.log("err", err.response);
-
                     this.setState({
                         visible: true,
                         mess: "Something went wrong! Please try again later.",
@@ -150,12 +145,6 @@ export default class Signin extends Component {
                             <span className='col-12 col-md-8'>
                                 New to{" "}
                                 <span className='Raleway'>EasyBookings</span>?{" "}
-                                {/* <span
-                                    onClick={this.toggleMode}
-                                    style={{ cursor: "pointer" }}
-                                    className='color-secondary my-1'>
-                                    Sign Up
-                                </span> */}
                                 <Link
                                     to='/auth/signup'
                                     className='color-secondary my-1'>

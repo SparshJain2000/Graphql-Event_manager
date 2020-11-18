@@ -1,6 +1,6 @@
 import React from "react";
 import "../stylesheets/spinner.css";
-const Spinner = ({ height }) => {
+const Spinner = () => {
     return (
         <div class='loadingio-spinner-ripple-woha8w4fq9d'>
             <div class='ldio-fz12uwmsvs'>
