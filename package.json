@@ -5,10 +5,10 @@
     "main": "server.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "nodemon server.js",
+        "start": "node server.js",
         "build": "cd frontend && npm run build",
         "install-client": "cd frontend && npm install",
-        "heroku-postbuild": "npm run install-client && npm run build",
+        "heroku-postbuild": "cd frontend && npm install && npm run build",
         "react-init": "cd frontend && npm i"
     },
     "author": "sparsh jain",
