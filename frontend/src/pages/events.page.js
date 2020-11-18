@@ -61,7 +61,7 @@ export default class Events extends Component {
                         }
                     }
                 }`;
-        Axios.post(`${process.env.REACT_APP_API_URL}`, { query })
+        Axios.post(`/graphql`, { query })
             .then((result) => {
                 const data = result?.data?.data?.events;
 
@@ -114,11 +114,7 @@ export default class Events extends Component {
                 date: this.state.date,
                 price: +this.state.price,
             };
-            Axios.post(
-                `${process.env.REACT_APP_API_URL}`,
-                { query, variables },
-                config,
-            )
+            Axios.post(`/graphql`, { query, variables }, config)
                 .then((result) => {
                     const data = result?.data?.data;
                     if (!data.createEvent && result?.data.errors) {

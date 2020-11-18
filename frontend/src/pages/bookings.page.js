@@ -39,7 +39,7 @@ export default class Bookings extends Component {
 
         if (this.context.token)
             Axios.post(
-                `${process.env.REACT_APP_API_URL}`,
+                `/graphql`,
                 { query },
                 {
                     headers: {
@@ -81,7 +81,7 @@ export default class Bookings extends Component {
         `;
         if (this.context.token)
             Axios.post(
-                `${process.env.REACT_APP_API_URL}`,
+                `/graphql`,
                 { query },
                 {
                     headers: {

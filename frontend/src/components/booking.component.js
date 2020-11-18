@@ -29,7 +29,7 @@ const Booking = ({ booking, cancelBooking }) => {
                 }
             }
         `;
-            Axios.post(`${process.env.REACT_APP_API_URL}`, { query })
+            Axios.post(`/graphql`, { query })
                 .then((result) => {
                     const data = result?.data?.data?.event;
                     console.log(booking.event, data);

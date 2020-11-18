@@ -44,11 +44,7 @@ const Event = ({ event, user, updateEventsList, deleteEventHandler }) => {
                     }
                 }
             `;
-        Axios.post(
-            `${process.env.REACT_APP_API_URL}`,
-            { query, variables },
-            config,
-        )
+        Axios.post(`/graphql`, { query, variables }, config)
             .then((result) => {
                 console.log(result);
                 const data = result?.data?.data;
@@ -106,11 +102,7 @@ const Event = ({ event, user, updateEventsList, deleteEventHandler }) => {
             `;
             // updateEventsList(updatedEvent);
 
-            Axios.post(
-                `${process.env.REACT_APP_API_URL}`,
-                { query, variables: updatedEvent },
-                config,
-            )
+            Axios.post(`/graphql`, { query, variables: updatedEvent }, config)
                 .then((result) => {
                     console.log(result);
                     const data = result?.data?.data;
@@ -143,7 +135,7 @@ const Event = ({ event, user, updateEventsList, deleteEventHandler }) => {
             }
         `;
         Axios.post(
-            `${process.env.REACT_APP_API_URL}`,
+            `/graphql`,
             { query },
             {
                 headers: {

@@ -71,7 +71,7 @@ export default class Signin extends Component {
             `;
 
             axios
-                .post(`${process.env.REACT_APP_API_URL}`, { query })
+                .post(`/graphql`, { query })
                 .then((data) => {
                     if (data.data.errors) {
                         this.setState({
