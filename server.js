@@ -1,5 +1,6 @@
 const bodyParser = require("body-parser"),
     express = require("express"),
+    path = require("path"),
     { graphqlHTTP } = require("express-graphql"),
     mongoose = require("mongoose"),
     gqlSchema = require("./graphql/schema/index"),
@@ -40,8 +41,13 @@ mongoose
         useCreateIndex: true,
     })
     .then(() => {
-        console.log("connected to MONGO");
+        console.log("connected to MONGO 🎉");
     });
+
+app.use(express.static("frontend/build"));
+app.use("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "frontend/build/index.html"));
+});
 const PORT = 8080;
 app.listen(PORT, () => {
     console.log(`Listening to ${PORT} 🎊`);
