@@ -1,4 +1,4 @@
-# blogapp
+# EasyBookings
 
 <img height="35" alt="React" src="https://img.shields.io/badge/-React-45b8d8?style=flat-square&logo=react&logoColor=white" /> <img height="35" alt="Nodejs" src="https://img.shields.io/badge/-Nodejs-3c873a?style=flat-square&logo=Node.js&logoColor=white" /> <img height="35" alt="GraphQL" src="https://img.shields.io/badge/-GraphQL-e535ab?style=flat-square&logo=graphql&logoColor=white" /> <img height="35" alt="MongoDB" src="https://img.shields.io/badge/-MongoDB-13aa52?style=flat-square&logo=mongodb&logoColor=white" />
 
@@ -19,7 +19,7 @@ Event booking site using MERN stack and GraphQL .
 #### Clone the repository
 
 ```bash
-git clone https://github.com/SparshJain2000/blogApp.git
+git clone https://github.com/SparshJain2000/Graphql-Event_manager.git
 ```
 
 #### Install dependencies
