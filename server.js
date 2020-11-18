@@ -48,7 +48,7 @@ app.use(express.static("frontend/build"));
 app.use("*", (req, res) => {
     res.sendFile(path.join(__dirname, "frontend/build/index.html"));
 });
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
     console.log(`Listening to ${PORT} 🎊`);
 });
