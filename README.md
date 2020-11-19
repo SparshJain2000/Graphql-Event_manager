@@ -86,7 +86,7 @@ Your app is ready to be deployed!
 
 ## License
 
-**MIT &copy; [Sparsh Jain](https://github.com/SparshJain2000/blogApp/blob/master/LICENSE)**
+**MIT &copy; [Sparsh Jain](https://github.com/SparshJain2000/Graphql-Event_manager/blob/main/LICENSE)**
 
 ## Support
 
